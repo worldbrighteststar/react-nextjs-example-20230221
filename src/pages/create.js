@@ -1,34 +1,42 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Create() {
+  const router = useRouter();
+
   return (
     <>
-      <h1>
-        <Link href="./">WEB</Link>
-      </h1>
-      <ol>
-        <li>
-          <Link href="/read/1">htm1</Link>
-        </li>
-        <li>
-          <Link href="/read/2">css</Link>
-        </li>
-      </ol>
-      <article>
-        <h2>Welcome</h2>
-        Hello, WEB!!
-      </article>
-      <ul>
-        <li>
-          <Link href="/create">Create</Link>
-        </li>
-        <li>
-          <Link href="/update">Update</Link>
-        </li>
-        <li>
-          <Link href="/delete">Delete</Link>
-        </li>
-      </ul>
+      <h2>CREATE</h2>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const option = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: event.target.title.value,
+              body: event.target.body.value,
+            }),
+          };
+
+          fetch(process.env.NEXT_PUBLIC_API_URL + "topics", option)
+            .then((resp) => resp.json())
+            .then((result) => {
+              router.push("/read/" + result.id);
+            });
+        }}
+      >
+        <p>
+          <input type="text" name="title" placeholder="title" />
+        </p>
+        <p>
+          <textarea name="body" placeholder="body"></textarea>
+        </p>
+        <p>
+          <input type="submit" value="create" />
+        </p>
+      </form>
     </>
   );
 }
